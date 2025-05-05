@@ -1,0 +1,202 @@
+{% extends 'EMVideoClub/base.html' %}
+{% load static %}
+
+{% comment %} {% block title %}Catálogo de Películas{% endblock %} {% endcomment %}
+
+{% block contentheader %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Catálogo de Películas  😀🎬</h1>
+	</div>
+	<div class="col-sm-6">
+		<ol class="breadcrumb float-sm-right">
+			<li class="breadcrumb-item"><a href="{% url 'inicio' %}">Home</a></li>
+			<li class="breadcrumb-item active">Catálogo de Películas  😀🎬</li>
+		</ol>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-12">
+		<div class="card card-primary card-outline">
+			<div class="card-header">
+				<h3 class="card-title">
+					Peliculas 🎦
+				</h3>
+			</div>
+			<div class="card-body">
+				<div class="row mb-3">
+					<div class="col-md-6 offset-md-3">
+						<input type="text" id="filtroPeliculas" class="form-control" placeholder="Buscar películas, géneros o elenco...">
+					</div>
+				</div>
+				<div class="row" id="contenedorPeliculas">
+					{% for pelicula in catalogo %}
+					<div class="col-md-3 mt-4 item-pelicula" id="item-{{pelicula.iCodPelicula}}">
+						<div class="position-relative p-3 bg-gray">
+							<div class="ribbon-wrapper">
+								<div class="ribbon bg-{{pelicula.estatusDisponibilidad}}">
+									{{pelicula.iconosAccion}}
+								</div>
+							</div>
+							<strong class="titulo">{{pelicula.nombre}}</strong>
+							<br>
+							<small class="fechaestreno">{{pelicula.fechaestreno}}</small>
+							<br>
+							<small class="generos">{{pelicula.generos|join:', '}}</small>
+							<br>
+							<small class="elenco">
+								{% for persona in pelicula.elenco %}
+								{{persona}}
+								{% endfor %}
+							</small>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% comment %} modalGeneral {% endcomment %}
+<div class="modal fade" id="modalGeneral" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Aparta tu película 😁📼<h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyContent">
+				<div class="callout callout-info">
+					<h5 id="tNombrePelicula"></h5>
+				</div>
+				<ul class="nav nav-tabs" id="navTabGeneral" role="tablist">
+					<li class="nav-item" id="nav-socio">
+						<a class="nav-link active" id="tab-socio-tab" data-bs-toggle="tab" href="#tab-socio" role="tab" aria-controls="tab-socio" aria-selected="true">
+							Datos del Socio
+						</a>
+					</li>
+					<li class="nav-item" id="nav-copia" style="display:none">
+						<a class="nav-link" id="tab-copia-tab" data-bs-toggle="tab" href="#tab-copia" role="tab" aria-controls="tab-copia">
+							Eliga copia
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="tabContentGeneral">
+					<div class="tab-pane fade show active" id="tab-socio" role="tabpanel" aria-labelledby="tab-socio-tab">
+						<br>
+						<form id="formApartado">
+							<input type="hidden" id="iCodPelicula" name="iCodPelicula">
+							<input type="hidden" id="iCodEstatus" name="iCodEstatus" value="5">
+							<div class="col-12">
+								<div class="row">
+									<div class="col-md-4 form-group">
+										<label for="iCodPersona" class="label-form"><i class="far fa-user"></i> Socio</label>
+										<select class="form-control" id="iCodPersona" name="iCodPersona" required>
+											<option value="">- Seleccionar -</option>
+										</select>
+									</div>
+									<div class="row" id="divDatosPersona">
+										<div class="col-md-4 form-group">
+											<label for="tNumeroTelefonico" class="label-form"><i class="fas fa-phone"></i> Numero Telefónico</label>
+											<input type="text" class="form-control" id="tNumeroTelefonico" readonly>
+										</div>
+										<div class="col-md-4 form-group">
+											<label for="tDireccion" class="label-form"><i class="fas fa-home"></i> Dirección</label>
+											<input type="text" class="form-control" id="tDireccion" readonly>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row">
+									<div class="col-md-4">
+										<button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Confirmar datos</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="tab-pane fade" id="tab-copia" role="tabpanel" aria-labelledby="tab-copia-tab">
+						<br>
+						<form id="formPrestamo">
+							<input type="hidden" id="iCodSolicitudApartado" name="iCodSolicitudApartado">
+							<div class="col-12">
+								<div class="row">
+									<div class="col-md-4 form-group">
+										<label for="iCodPeliculaCopia" class="label-form"><i class="fas fa-film"></i> Copia de la película</label>
+										<select class="form-control" id="iCodPeliculaCopia" name="iCodPeliculaCopia" required>
+											<option value="">- Seleccionar -</option>
+										</select>
+									</div>
+									<div class="col-md-4 form-group">
+										<label for="dFechaPrestamo" class="label-form"><i class="fas fa-calendar"></i> Fecha de préstamo</label>
+										<input type="date" class="form-control" id="dFechaPrestamo" name="dFechaPrestamo" required>
+									</div>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row">
+									<div class="col-md-4">
+										<button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Confirmar Préstamo</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<style>
+	.item-pelicula {
+		cursor: pointer; /* Cambia el cursor al de "manita" */
+		transition: background-color 0.3s ease;
+	}
+
+	.item-pelicula:hover {
+		background-color: #f0f0f0; /* Un grisecito suave al pasar el mouse */
+		border-radius: 8px; /* Opcional, para que se vea más "clickeable" */
+	}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'EMVideoClub/js/peliculas.js' %}"></script>
+{% endblock %}
+
+
+{% comment %} <table class="table table-bordered table-hover datatable">
+	<thead>
+		<tr>
+			<th>Título</th>
+			<th>Géneros</th>
+			<th>Elenco</th>
+			<th>Disponibilidad</th>
+			<th>Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for pelicula in catalogo %}
+		{% comment %} <pre>{{pelicula}}<pre>
+		<tr>
+			<td><strong>{{pelicula.nombre}}</strong></td>
+			<td>{{pelicula.generos|join:', '}}</td>
+			<td>
+			{% for persona in pelicula.elenco %}
+				{{persona}}
+			{% endfor %}
+			</td>
+			<td class="bg-{{pelicula.estatusDisponibilidad}}">{{pelicula.copiasDisponibles}}</td>
+			<td>
+				<button id="iCodPelicula-{{pelicula.iCodPelicula}}" class="btn btn-default btn-detalles">{{pelicula.iconosAccion}}</button>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table> {% endcomment %}

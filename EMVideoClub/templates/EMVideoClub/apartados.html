@@ -1,0 +1,109 @@
+{% extends 'EMVideoClub/base.html' %}
+{% load static %}
+
+{% comment %} {% block title %}Catálogo de Películas{% endblock %} {% endcomment %}
+
+{% block contentheader %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Listado de apartados 📼🤞</h1>
+	</div>
+	<div class="col-sm-6">
+		<ol class="breadcrumb float-sm-right">
+			<li class="breadcrumb-item"><a href="{% url 'inicio' %}">Home</a></li>
+			<li class="breadcrumb-item active">Listado de apartados 📼 🤞</li>
+		</ol>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
+            Apartados 📼
+        </h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover datatable">
+            <thead>
+                <tr>
+                    <th>ID de Apartado</th>
+                    <th>Película</th>
+                    <th>Socio</th>
+                    <th>Fecha Registro</th>
+                    <th>Acción</th>
+                </tr>
+            <thead>
+            <tbody>
+            {% for apartado in listaApartados %}
+                <tr class="table-{{apartado.estatusDisponibilidad}}">
+                    <td>{{apartado.iCodSolicitudApartado}}</td>
+                    <td>{{apartado.tNombrePelicula}}</td>
+                    <td>{{apartado.tNombrePersona}}</td>
+                    <td>{{apartado.dtFechaRegistro}}</td>
+                    <td>
+                        {% if apartado.copiasDisponibles > 0 %}
+                            <button class="btn btn-default btn-prestamo" id="btn-{{ apartado.iCodSolicitudApartado }}">
+                                ¡Disfrútala ya!<br>😁🍿
+                            </button>
+                        {% else %}
+                            <span class="badge badge-secondary">No disponible</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalGeneral" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Apartar copia 😁📼🏠<h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyContent">
+                <div class="row">
+                    <div class="callout callout-info">
+                        <h3 id="tNombrePelicula"></h3>
+                    </div>
+                </div>
+                <br>
+                <form id="formPrestamo">
+                    <input type="hidden" id="iCodSolicitudApartado" name="iCodSolicitudApartado">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label for="iCodPeliculaCopia" class="label-form"><i class="fas fa-film"></i> Copia de la película</label>
+                                <select class="form-control" id="iCodPeliculaCopia" name="iCodPeliculaCopia" required>
+                                    <option value="">- Seleccionar -</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="dFechaPrestamo" class="label-form"><i class="fas fa-calendar"></i> Fecha de préstamo</label>
+                                <input type="date" class="form-control" id="dFechaPrestamo" name="dFechaPrestamo" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Confirmar Préstamo</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'EMVideoClub/js/apartados.js' %}"></script>
+{% endblock %}

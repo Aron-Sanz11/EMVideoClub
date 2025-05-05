@@ -1,0 +1,309 @@
+{% extends 'EMVideoClub/base.html' %}
+{% load static %}
+
+{% comment %} {% block title %}Catálogo de Películas{% endblock %} {% endcomment %}
+
+{% block contentheader %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Listado de Películas  🧐🎬</h1>
+	</div>
+	<div class="col-sm-6">
+		<ol class="breadcrumb float-sm-right">
+			<li class="breadcrumb-item"><a href="{% url 'inicio' %}">Home</a></li>
+			<li class="breadcrumb-item active">Listado de Películas  🧐🎬</li>
+		</ol>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-12">
+		<div class="card card-primary card-outline">
+			<div class="card-header">
+				<div style="display: flex; justify-content: space-between; align-items: center;">
+					<h3 class="card-title" style="margin: 0;">Peliculas 🎦</h3>
+					<button type="button" class="btn btn-outline-primary btn-agregarPelicula"><i class="fa fa-film"></i> Agregar Pelicula</button>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class="col-12">
+					<div class="row">
+						<table class="table datatable table-hover" id="tblPeliculas">
+							<thead>
+								<tr>
+									<th>ID Pelicula</th>
+									<th>Título</th>
+									<th>Fecha Estreno</th>
+									<th>Acción</th>
+								</tr>
+							</thead>
+							{% for pelicula in peliculas %}
+							<tr>
+								<td>{{pelicula.iCodPelicula}}</td>
+								<td>{{pelicula.tNombre}}</td>
+								<td>{{pelicula.dFechaEstreno}}</td>
+								<td><button class="btn btn-primary btn-detalles" id="btn-{{pelicula.iCodPelicula}}">Detalles 👀</button></td>
+							</tr>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalGeneral" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Detalles de película 📼</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyContent">
+				<ul class="nav nav-tabs" id="navTabGeneral" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" id="tab-pelicula-tab" data-bs-toggle="tab" href="#tab-pelicula" role="tab" aria-controls="tab-pelicula" aria-selected="true">
+							Datos de la Película 📼
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="tab-copias-tab" data-bs-toggle="tab" href="#tab-copias" role="tab" aria-controls="tab-copias">
+							Copias 🎟️
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="tabContentGeneral">
+					<div class="tab-pane fade show active" id="tab-pelicula" role="tabpanel" aria-labelledby="tab-pelicula-tab">
+						<br>
+						<form id="formPelicula">
+							<div class="col-12">
+								<div class="row">
+								    <div class="card card-info card-outline">
+                                		<div class="card-header">
+                                    		<h3 class="card-title">Película</h3>
+                                		</div>
+                                		<div class="card-body">
+											<div class="row">
+												<input type="hidden" id="iCodPelicula" name="pelicula[iCodPelicula]">
+												<div class="col-md-4">
+													<label for="tNombrePelicula">Título</label> 
+													<input type="text" class="form-control" name="pelicula[tNombre]" id="tNombrePelicula">
+												</div>
+												<div class="col-md-4">
+													<label for="dFechaEstreno">Fecha Estreno</label> 
+													<input type="date" class="form-control" name="pelicula[dFechaEstreno]" id="dFechaEstreno">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card card-success card-outline">
+                                		<div class="card-header">
+                                    		<h3 class="card-title">Géneros</h3>
+                                		</div>
+                                		<div class="card-body">
+											<div class="row" id="divGeneros">
+												{% for genero in catalogos.generos %}
+												<div class="col-md-3">
+													<div class="form-group clearfix">
+														<div class="icheck-primary d-inline">
+															<input type="checkbox" name="generos[genero-{{genero.iCodGenero}}]" id="genero-{{genero.iCodGenero}}" value="{{genero.iCodGenero}}"><label for="genero-{{genero.iCodGenero}}">{{genero.tNombreGenero}}</label>
+														</div>
+													</div>
+												</div>
+												{% endfor %}
+											</div>
+										</div>
+									</div>
+
+									<div class="card card-warning card-outline">
+                                		<div class="card-header">
+                                    		<h3 class="card-title">Directores</h3>
+                                		</div>
+                                		<div class="card-body">
+											<div class="row" id="divDirectores">
+											{% for director in catalogos.directores %}
+												<div class="col-md-3">
+													<div class="form-group clearfix">
+														<div class="icheck-primary d-inline">
+															<input type="checkbox" name="directores[director-{{director.iCodDirector}}]" id="director-{{director.iCodDirector}}" value="{{director.iCodDirector}}"><label for="director-{{director.iCodDirector}}">{{director.tNombre}}</label>
+														</div>
+													</div>
+												</div>
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+
+									<div class="card card-danger card-outline">
+                                		<div class="card-header">
+                                    		<h3 class="card-title">Actores</h3>
+                                		</div>
+                                		<div class="card-body">
+											<div class="row" id="divActores">
+											{% for actor in catalogos.actores %}
+												<div class="col-md-3">
+													<div class="form-group clearfix">
+														<div class="icheck-primary d-inline">
+															<input type="checkbox" name="actores[actor-{{actor.iCodActor}}]" id="actor-{{actor.iCodActor}}" value="{{actor.iCodActor}}"><label for="actor-{{actor.iCodActor}}">{{actor.tNombre}}</label>
+														</div>
+													</div>
+												</div>
+											{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<br>
+							<div class="col-12">
+								<div class="row">
+									<div class="col-md-4">
+										<button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Confirmar datos</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="tab-pane" id="tab-copias" role="tabpanel" aria-labelledby="tab-copias-tab">
+						<br>
+						<div class="col-12">
+							<div class="row">
+								<details id="dtlsAgregarCopiasPelicula">
+									<summary><i class="fas fa-plus"></i> Agregar Copias 📼</summary>
+									<br>
+									<form id="formPeliculaCopia">
+										<div class="row">
+											<div class="col-md-4">
+												<label for="numeroCopias">Número de Copias</label>
+												<input type="number" class="form-control" name="numeroCopias" required>
+											</div>
+											<div class="col-md-4">
+												<label class="invisible d-block">-</label>
+												<button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar</button>
+											</div>
+										</div>
+									</form>
+								</details>
+								<hr>
+								<table class="table table-hover" id="tblCopias">
+									<thead>
+										<tr>
+											<th>Pelicula</th>
+											<th>ID Copia</th>
+											<th>Estatus</th>
+											<th>Acción</th>
+										</tr>
+									</thead>
+									<tbody id="tblBodyCopias">
+									</tbody>
+								</table>
+								<div class="col-12" id="divDetallesPrestamo" style="display:none">
+									<hr>
+									<div class="row">
+										<div class="card card-info card-outline">
+											<div class="card-header">
+												<h3 class="card-title">Detalles del Préstamo</h3>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-md-4">
+														<div class="card card-primary card-outline">
+															<div class="card-body box-profile">
+																<div class="text-center">
+																	<img class="profile-user-img img-fluid img-circle" src="" alt="User profile picture">
+																</div>
+																<h3 class="profile-username text-center"><span id="tNombrePersona"></span></h3>
+																<p class="text-muted text-center">ID-<span id="iCodPersona"></span></p>
+																<ul class="list-group list-group-unbordered">
+																	<li class="list-group-item"><b>Número Telefónico: </b> <span id="tNumeroTelefonico"></span></li>
+																	<li class="list-group-item"><b>Dirección: </b><span id="tDireccion"></span></li>
+																</ul>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4">
+														<div class="card card-info card-outline">
+														    <div class="card-header">
+                                    							<h3 class="card-title">Detalles del Apartado</h3>
+                               				 				</div>
+															<div class="card-body box-profile">
+																<ul class="list-group list-group-unbordered">
+																	<li class="list-group-item"><b>ID Apartado: </b> <span id="iCodSolicitudApartado"></span></li>
+																	<li class="list-group-item"><b>Película: </b><span id="tNombrePelicula"></span></li>
+																	<li class="list-group-item"><b>ID Película: </b><span id="iCodPelicula"></span></li>
+																	<li class="list-group-item"><b>Fecha y Hora Registro: </b><span id="dtFechaApartado"></span></li>
+																</ul>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-md-4">
+														<div class="card card-warning card-outline">
+														    <div class="card-header">
+                                    							<h3 class="card-title">Detalles del Préstamo</h3>
+                               				 				</div>
+															<div class="card-body box-profile">
+																<ul class="list-group list-group-unbordered">
+																	<li class="list-group-item"><b>ID Préstamo: </b> <span id="iCodSolicitudPrestamo"></span></li>
+																	<li class="list-group-item"><b>ID Película Copia: </b>PC-<span id="iCodPeliculaCopia"></span></li>
+																	<li class="list-group-item"><b>Fecha de Prestamo: </b><span id="dFechaPrestamo"></span></li>
+																	<li class="list-group-item"><b>Fecha y Hora Registro: </b><span id="dtFechaRegistro"></span></li>
+																</ul>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalAgregarPelicula" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Agregar Película 📼</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyAgregarPelicua">
+				<form id="formAgregarPelicula">
+					<div class="col-12">
+						<div class="row">
+							<div class="col-md-4">
+								<label for="tNombre">Título de la Película</label>
+								<input class="form-control" type="text" name="pelicula[tNombre]" id="tNombre" required>
+							</div>
+							<div class="col-md-4">
+								<label for="dFechaEstreno">Fecha de Estreno</label>
+								<input class="form-control" type="date" name="pelicula[dFechaEstreno]" id="dFechaEstreno" required>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-md-4">
+								<button type="submit" class="btn btn-primary"><i class="fas fa-film"></i> Agregar Película</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'EMVideoClub/js/adminPeliculas.js' %}"></script>
+{% endblock %}

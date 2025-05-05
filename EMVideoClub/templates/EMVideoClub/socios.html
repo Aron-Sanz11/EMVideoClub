@@ -1,0 +1,196 @@
+{% extends 'EMVideoClub/base.html' %}
+{% load static %}
+
+{% comment %} {% block title %}Catálogo de Películas{% endblock %} {% endcomment %}
+
+{% block contentheader %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Listado de socios 👥
+        </h1>
+	</div>
+	<div class="col-sm-6">
+		<ol class="breadcrumb float-sm-right">
+			<li class="breadcrumb-item"><a href="{% url 'inicio' %}">Home</a></li>
+			<li class="breadcrumb-item active">Listado de socios 👥</li>
+		</ol>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 class="card-title" style="margin: 0;"> Socios 👥</h3>
+            <button type="button" class="btn btn-outline-primary btn-nuevoSocio"><i class="fa fa-plus"></i><i class="fa fa-user"></i> Nuevo Socio</button></div>
+    </div>
+    <div class="card-body">
+        <div class="col-12">
+            <div class="row">
+                {% for socio in nuestrosSocios %}
+                <div class="col-md-4">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+                            <div class="text-center">
+                                <img class="profile-user-img img-fluid img-circle" src="" alt="User profile picture">
+                            </div>
+                            <h3 class="profile-username text-center">{{socio.tNombre}}</h3>
+                            <p class="text-muted text-center">ID-{{socio.iCodPersona}}</p>
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item"><b>Número Telefónico: </b>{{socio.tNumeroTelefonico}}</li>
+                                <li class="list-group-item"><b>Dirección: </b>{{socio.tDireccion}}</li>
+                            </ul>
+                            <button class="btn btn-primary btn-block btn-detalles" id="btn-{{socio.iCodPersona}}">Detalles 👀</button>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalGeneral" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles del Socio 👤<h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <form id="formPersona">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="card card-info card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Datos del Socio</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">    
+                                        <input type="hidden" name="iCodPersona" id="iCodPersona">
+                                        <div class="col-md-4">
+                                            <label for="tNombre">Nombre</label>
+                                            <input type="text" class="form-control" name="tNombre" id="tNombre" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="tNumeroTelefonico">Número Telfónico</label>
+                                            <input type="text" class="form-control maskNumeroTelefonico" name="tNumeroTelefonico" id="tNumeroTelefonico" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="tDireccion">Dirección</label>
+                                            <input type="text" class="form-control" name="tDireccion" id="tDireccion" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card card-success card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Genéros favoritos</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row" id="contentGeneros">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card card-warning card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Diretores favoritos</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row" id="contentDirectores">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="card card-danger card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Actores favoritos</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        <div class="row" id="contentActores">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-info"><i class="fas fa-check"></i> Actualizar datos</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalNuevoSocio" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo socio 👤<h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+                <form id="formNuevoSocio">
+                    <div class="col-12">
+                        <div class="row">
+                            <input type="hidden" name="rol[iCodRol]" id="iCodRol" value="1">
+                            <div class="col-md-4">
+                                <label for="tNombre">Nombre</label>
+                                <input type="text" class="form-control" name="persona[tNombre]" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="eSexo">Nombre</label>
+                                <select class="form-control" name="persona[eSexo]" required>
+                                    <option value="">- Seleccionar -</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="dFechaNacimiento">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" name="persona[dFechaNacimiento]" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tNumeroTelefonico">Número Telefónico</label>
+                                <input type="text" class="form-control maskNumeroTelefonico" name="persona[tNumeroTelefonico]" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tDireccion">Dirección</label>
+                                <input type="text" class="form-control" name="persona[tDireccion]" required>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Registrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'EMVideoClub/js/socios.js' %}"></script>
+{% endblock %}

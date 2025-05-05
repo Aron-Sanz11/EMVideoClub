@@ -1,0 +1,119 @@
+{% extends 'EMVideoClub/base.html' %}
+{% load static %}
+
+{% comment %} {% block title %}Catálogo de Películas{% endblock %} {% endcomment %}
+
+{% block contentheader %}
+<div class="row">
+	<div class="col-sm-6">
+		<h1>Listado de préstamos  😀🎬</h1>
+	</div>
+	<div class="col-sm-6">
+		<ol class="breadcrumb float-sm-right">
+			<li class="breadcrumb-item"><a href="{% url 'inicio' %}">Home</a></li>
+			<li class="breadcrumb-item active">Listado de préstamos  😀🍿</li>
+		</ol>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">
+            Préstamos 🍿
+        </h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover datatable">
+            <thead>
+                <tr>
+                    <th>ID de Préstamo</th>
+                    <th>Película</th>
+                    <th>ID de Copia</th>
+                    <th>Fecha Préstamo</th>
+                    <th>Socio</th>
+                    <th>Fecha Registro</th>
+                    <th>Acción</th>
+                </tr>
+            <thead>
+            <tbody>
+            {% for prestamo in listaPrestamos %}
+                <tr>
+                    <td>{{prestamo.iCodSolicitudPrestamo}}</td>
+                    <td>{{prestamo.tNombrePelicula}}</td>
+                    <td>PC-{{prestamo.iCodPeliculaCopia}}</td>
+                    <td>{{prestamo.dFechaPrestamo}}</td>
+                    <td>{{prestamo.tNombrePersona}}</td>
+                    <td>{{prestamo.dtFechaRegistro}}</td>
+                    <td>
+                        <button class="btn btn-default btn-devolver" id="btn-{{prestamo.iCodSolicitudPrestamo}}">
+                            Devolver <br>😁📼📥
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modalGeneral" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Devolver Copia 📼📥<h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyContent">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="callout callout-info col-md-6">
+                            <h3 id="tNombrePelicula"></h3>
+                            <hr>
+                            <h5>Detalles de la copia</h5>
+                            <p>Número de Copia: <strong><span id="iCodPeliculaCopia"></span></strong></p>
+                            <p>Fecha de préstamo: <strong><span id="dFechaPrestamo"></span></strong></p>
+                        </div>
+                        <div class="callout callout-success col-md-6">
+                            <h3 id="tNombrePersona"></h3>
+                            <hr>
+                            <h5>Detalles del socio</h5>
+                            <p>ID Socio: <strong><span id="iCodPersona"></span></strong></p>
+                            <p>Núnero Telefónico: <strong><span id="tNumeroTelefonico"></span></strong></p>
+                            <p>Dirección: <strong><span id="tDireccion"></span></strong></p>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <form id="formDevolverPrestamo">
+                            <div class="col-12">
+								<div class="row">
+                                    <input type="hidden" id="iCodSolicitudPrestamo" name="iCodSolicitudPrestamo">
+                                    <div class="col-md-4 form-group">
+                                        <label for="dFechaDevolucion">Fecha de devolución</label>
+                                        <input type="date" class="form-control" id="dFechaDevolucion" name="dFechaDevolucion" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+								<div class="row">
+									<div class="col-md-4">
+										<button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Confirmar Devolución</button>
+									</div>
+								</div>
+							</div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'EMVideoClub/js/prestamos.js' %}"></script>
+{% endblock %}
