@@ -13,11 +13,52 @@ class adminPeliculas{
 
     iniciarPlugins(){
         $('.datatable').DataTable();
+        /* Configuración del select2 multiple para agregar nuevo género como etiqueta*/
+        $('#tNombreGenero').select2({
+            dropdownParent: $('#modalAgregarGenero'),
+            tags: true,
+            createTag: (textoTipeado)=> {
+                let texto = textoTipeado.term.trim();
+
+                if(texto === ''){
+                    return null;
+                }
+
+                return {
+                    id: textoTipeado.term,
+                    text: textoTipeado.term,
+                    newTag: true
+                };
+            }
+        });
     }
 
     iniciarEventos(){
         $.ajaxSetup({
             headers: { "X-CSRFToken": $('[name=csrfmiddlewaretoken]').val() }
+        });
+
+        $('#tNombreGenero').on('select2:select', function (event) {
+            let bAgregarGeneroaPelicula = ()=> $('#bAgregarGeneroaPelicula').is(':checked') ? 'Se le agregará el género a la película' : 'No se le agregará el género a la película';
+
+            let data = event.params.data;
+
+            if (data.newTag) {
+                Swal.fire({
+                    icon: 'question',
+                    title: 'Nuevo género ingresado',
+                    html: `¿Desea agregar el género "${data.text}" al catálogo?<br><b><span style="color:red">${bAgregarGeneroaPelicula()}</span></b>`,
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+                        // Si cancela, quitas el tag
+                        let values = $(this).val().filter(val => val !== data.id);
+                        $(this).val(values).trigger('change');
+                    }
+                });
+            }
         });
 
         $(document).on('click', function(event) {
@@ -353,6 +394,10 @@ class adminPeliculas{
                 });
             }
         });
+        
+        $('.btn-agregarGenero').on('click', function(){
+            $('#modalAgregarGenero').modal('show');
+        });
     }
 }
 
@@ -507,4 +552,9 @@ class funcionesGenerales{
             }
         });
     }
+    
+    normalizarTexto(texto) {
+        return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+    
 }

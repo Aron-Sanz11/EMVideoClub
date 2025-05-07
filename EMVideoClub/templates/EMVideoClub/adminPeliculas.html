@@ -101,8 +101,11 @@
 									</div>
 									<div class="card card-success card-outline">
                                 		<div class="card-header">
-                                    		<h3 class="card-title">Géneros</h3>
-                                		</div>
+											<div style="display: flex; justify-content: space-between; align-items: center;">
+                                    			<h3 class="card-title">Géneros</h3>
+												<button type="button" class="btn btn-outline-success btn-agregarGenero"><i class="fas fa-tags"></i> Agregar Género</button>
+                                			</div>
+										</div>
                                 		<div class="card-body">
 											<div class="row" id="divGeneros">
 												{% for genero in catalogos.generos %}
@@ -293,6 +296,41 @@
 						<div class="row">
 							<div class="col-md-4">
 								<button type="submit" class="btn btn-primary"><i class="fas fa-film"></i> Agregar Película</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modalAgregarGenero" data-bs-backdrop="static" tabindex="-1">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Agregar Géneros 🏷️</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+			</div>
+			<div class="modal-body" id="modalBodyAgregarGenero">
+				<form id="formAgregarGenero">
+					<div class="col-12">
+						<div class="row">
+							<div class="col-md-6">
+								<label for="tNombreGenero">Géneros</label>
+								<select class="form-control select2" name="genero[tNombre]" id="tNombreGenero">
+									{% for genero in catalogos.generos %}
+									<option value="{{genero.iCodGenero}}" disabled>{{genero.tNombreGenero}}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group clearfix">
+									<label class="invisible d-block">-</label>
+									<div class="icheck-primary d-inline">
+										<input type="checkbox" name="bAgregarGeneroaPelicula" id="bAgregarGeneroaPelicula" value="1" checked><label for="bAgregarGeneroaPelicula">Agregar Generos a la Pelicula</label>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
